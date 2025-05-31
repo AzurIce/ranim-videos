@@ -1,0 +1,12 @@
+[package]
+name = "evt"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ranim.workspace = true
+itertools.workspace = true
+evt-lib = { git = "https://github.com/BJTUEventCameraSoftwareGroup/evt-lib", branch = "nusb-v0.2" }
+rayon = "1.10.0"
+rand = "0.9.1"
+rand_chacha = "0.9.0"
