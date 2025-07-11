@@ -213,8 +213,8 @@ impl TimelineConstructor for VItemHelloScene {
             timeline.play_with(|item| item.transform_to(circle));
             timeline.forward(1.0);
             let circle = timeline.state().clone();
-            timeline.play_with(|circle| circle.unwrite());
-            timeline.play(circle.write());
+            timeline.play_with(|circle| circle.unwrite().with_duration(2.0));
+            timeline.play(circle.write().with_duration(2.0));
             timeline.play_with(|circle| circle.fade_out());
         }
         r.timelines_mut().sync();

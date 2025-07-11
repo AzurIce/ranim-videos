@@ -3,6 +3,10 @@ name = "evt"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+app = ["ranim/app"]
+profiling = ["ranim/profiling"]
+
 [dependencies]
 ranim.workspace = true
 itertools.workspace = true

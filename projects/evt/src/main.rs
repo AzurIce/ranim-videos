@@ -14,7 +14,7 @@ use ranim::{
         vitem::{geometry::Square, svg::SvgItem, typst::typst_svg, VItem}, Group
     },
     prelude::*,
-    render::primitives::{vitem::VItemPrimitive, Extract}, timeline::TimelinesFunc,
+    render::primitives::{vitem::VItemPrimitive, Extract}, timeline::{TimelinesFunc},
 };
 use rayon::prelude::*;
 
@@ -27,12 +27,12 @@ fn rng() -> Arc<Mutex<ChaCha8Rng>> {
 #[scene]
 struct DenoiseScene;
 
-impl TimelineConstructor for DenoiseScene {
-    fn construct(self, r: &mut RanimScene, _r_cam: TimelineId<CameraFrame>) {
+impl SceneConstructor for DenoiseScene {
+    fn construct(self, r: &mut RanimScene, _r_cam: ItemId<CameraFrame>) {
         let (width, height) = (10, 10);
 
         let time_surface = TimeSurface::new(width, height);
-        let r_time_surface = r.init_timeline(time_surface);
+        let r_time_surface = r.insert_and_show(time_surface);
 
         let events = (0..640)
             .map(|_| {
@@ -107,16 +107,21 @@ impl TimeSurfaceCell {
     }
 }
 
+// Without text: 212.1 µs
+// Without cache: 127131.2 µs
+// With cache: 110121.6 µs
+// With LRU Cache: 51117.8 µs
+// With LRU Cache and only construct world once: 2475.2 µs
 impl Extract for TimeSurfaceCell {
     type Target = Vec<VItemPrimitive>;
     fn extract(&self) -> Self::Target {
         let mut _cache = self._cache.lock().unwrap();
         let mut _need_update = self._need_update.lock().unwrap();
-        // if let Some(cache) = _cache.as_ref() {
-        //     if !*_need_update {
-        //         return cache.clone();
-        //     }
-        // }
+        if let Some(cache) = _cache.as_ref() {
+            if !*_need_update {
+                return cache.clone();
+            }
+        }
         let padding_ratio = 0.1;
 
         let square_size = self.cell_size * (1.0 - padding_ratio);
@@ -212,7 +217,7 @@ impl Extract for TimeSurface {
             .map(|cell| cell.real_t)
             .fold((t, t), |acc, x| (acc.0.min(x), acc.1.max(x)));
         self.cells
-            .par_iter()
+            .par_iter() // Without par: 207724.5 µs, With par: 
             .flat_map(|cell| {
                 let alpha = (cell.real_t - min_t) as f32 / (max_t - min_t) as f32;
                 cell.extract().with(|primitive| {
@@ -224,5 +229,8 @@ impl Extract for TimeSurface {
 }
 
 fn main() {
+    #[cfg(not(feature="app"))]
     render_scene(DenoiseScene, &AppOptions::default());
+    #[cfg(feature="app")]
+    run_scene_app(DenoiseScene);
 }
