@@ -9,12 +9,14 @@ use rand_chacha::ChaCha8Rng;
 use ranim::{
     color::palettes::manim,
     components::ScaleHint,
-    glam::{dvec3, DVec3},
+    glam::{DVec3, dvec3},
     items::{
-        vitem::{geometry::Square, svg::SvgItem, typst::typst_svg, VItem}, Group
+        Group,
+        vitem::{VItem, geometry::Square, svg::SvgItem, typst::typst_svg},
     },
     prelude::*,
-    render::primitives::{vitem::VItemPrimitive, Extract}, timeline::{TimelinesFunc},
+    render::primitives::{Extract, vitem::VItemPrimitive},
+    timeline::TimelinesFunc,
 };
 use rayon::prelude::*;
 
@@ -25,36 +27,36 @@ fn rng() -> Arc<Mutex<ChaCha8Rng>> {
 }
 
 #[scene]
-struct DenoiseScene;
+#[preview]
+#[output]
+fn denoise(r: &mut RanimScene) {
+    let _r_cam = r.insert_and_show(CameraFrame::default());
 
-impl SceneConstructor for DenoiseScene {
-    fn construct(self, r: &mut RanimScene, _r_cam: ItemId<CameraFrame>) {
-        let (width, height) = (10, 10);
+    let (width, height) = (10, 10);
 
-        let time_surface = TimeSurface::new(width, height);
-        let r_time_surface = r.insert_and_show(time_surface);
+    let time_surface = TimeSurface::new(width, height);
+    let r_time_surface = r.insert_and_show(time_surface);
 
-        let events = (0..640)
-            .map(|_| {
-                let rng = rng();
-                let mut rng = rng.lock().unwrap();
-                (
-                    rng.random::<u32>() % 500,
-                    rng.random::<u32>() % height as u32,
-                    rng.random::<u32>() % width as u32,
-                )
-            })
-            .sorted()
-            .collect::<Vec<_>>();
+    let events = (0..640)
+        .map(|_| {
+            let rng = rng();
+            let mut rng = rng.lock().unwrap();
+            (
+                rng.random::<u32>() % 500,
+                rng.random::<u32>() % height as u32,
+                rng.random::<u32>() % width as u32,
+            )
+        })
+        .sorted()
+        .collect::<Vec<_>>();
 
-        let total_secs = 6.0;
-        let step = 0.2_f64.min(total_secs / events.len() as f64);
-        for event in events {
-            r.timeline_mut(&r_time_surface).update_with(|time_surface| {
-                time_surface.accept(event.0 as usize, event.2 as usize, event.1 as usize);
-            });
-            r.timelines_mut().forward(step);
-        }
+    let total_secs = 6.0;
+    let step = 0.2_f64.min(total_secs / events.len() as f64);
+    for event in events {
+        r.timeline_mut(&r_time_surface).update_with(|time_surface| {
+            time_surface.accept(event.0 as usize, event.2 as usize, event.1 as usize);
+        });
+        r.timelines_mut().forward(step);
     }
 }
 
@@ -128,12 +130,11 @@ impl Extract for TimeSurfaceCell {
         let pos = self.start
             + self.y as f64 * DVec3::NEG_Y * self.cell_size
             + self.x as f64 * DVec3::X * self.cell_size;
-        let text =
-            SvgItem::new(typst_svg(format!("{}", self.real_t).as_str())).with(|text| {
-                text.scale_to(ScaleHint::PorportionalY(square_size * 0.2))
-                    .set_fill_color(manim::WHITE)
-                    .put_center_on(pos);
-            });
+        let text = SvgItem::new(typst_svg(format!("{}", self.real_t).as_str())).with(|text| {
+            text.scale_to(ScaleHint::PorportionalY(square_size * 0.2))
+                .set_fill_color(manim::WHITE)
+                .put_center_on(pos);
+        });
         let square = Square::new(square_size).with(|square| {
             square.put_center_on(pos);
         });
@@ -217,7 +218,7 @@ impl Extract for TimeSurface {
             .map(|cell| cell.real_t)
             .fold((t, t), |acc, x| (acc.0.min(x), acc.1.max(x)));
         self.cells
-            .par_iter() // Without par: 207724.5 µs, With par: 
+            .par_iter() // Without par: 207724.5 µs, With par:
             .flat_map(|cell| {
                 let alpha = (cell.real_t - min_t) as f32 / (max_t - min_t) as f32;
                 cell.extract().with(|primitive| {
@@ -229,8 +230,8 @@ impl Extract for TimeSurface {
 }
 
 fn main() {
-    #[cfg(not(feature="app"))]
-    render_scene(DenoiseScene, &AppOptions::default());
-    #[cfg(feature="app")]
-    run_scene_app(DenoiseScene);
+    #[cfg(not(feature = "app"))]
+    render_scene(denoise_scene);
+    #[cfg(feature = "app")]
+    preview(denoise_scene);
 }
