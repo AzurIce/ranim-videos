@@ -8,7 +8,8 @@ app = ["ranim/app"]
 profiling = ["ranim/profiling"]
 
 [dependencies]
-ranim.workspace = true
+ranim = "0.1.3"
+# ranim.workspace = true
 itertools.workspace = true
 evt-lib = { git = "https://github.com/BJTUEventCameraSoftwareGroup/evt-lib", branch = "nusb-v0.2" }
 rayon = "1.10.0"

@@ -1,11 +1,24 @@
+[package]
+name = "ranim-videos"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = "4.5.47"
+log = "0.4.28"
+pretty_env_logger = "0.5.0"
+# ranim.workspace = true
+ranim-cli.workspace = true
+
 [workspace]
 resolver = "3"
 members = ["projects/*"]
 
 [workspace.dependencies]
 # ranim = { git = "https://github.com/AzurIce/ranim", rev = "aabc0d5" }
-# ranim = { path = "../ranim" }
-ranim = "0.1.1"
+ranim = { path = "../ranim" }
+ranim-cli = { path = "../ranim/packages/ranim-cli" }
+# ranim = "0.1.1"
 itertools = "0.14.0"
 
 # Enable a small amount of optimization in the dev profile.

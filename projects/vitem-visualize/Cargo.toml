@@ -11,5 +11,5 @@ app = ["ranim/app"]
 
 [dependencies]
 # ranim.workspace = true
-ranim = { workspace = true, features = ["app"] }
+ranim = { version = "0.1.3", features = ["app"] }
 itertools.workspace = true
