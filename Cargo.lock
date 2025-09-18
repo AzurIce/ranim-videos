@@ -98,12 +98,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc7eb209b1518d6bb87b283c20095f5228ecda460da70b44f0802523dea6da04"
 
 [[package]]
-name = "android-tzdata"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
-
-[[package]]
 name = "android_system_properties"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -728,16 +722,15 @@ checksum = "7588475145507237ded760e52bf2f1085495245502033756d28ea72ade0e498b"
 
 [[package]]
 name = "chrono"
-version = "0.4.41"
+version = "0.4.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c469d952047f47f91b68d1cba3f10d63c11d73e4636f24f08daf0278abf01c4d"
+checksum = "145052bdd345b87320e369255277e3fb5152762ad123a901ef5c262dd38fe8d2"
 dependencies = [
- "android-tzdata",
  "iana-time-zone",
  "js-sys",
  "num-traits",
  "wasm-bindgen",
- "windows-link",
+ "windows-link 0.2.0",
 ]
 
 [[package]]
@@ -1209,6 +1202,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "diff-match-patch-rs"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1e836eb966678daed8789e698dbdb1016a260c3cdaca6172585e13580c4e4be"
+dependencies = [
+ "chrono",
+ "percent-encoding",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1557,7 +1560,7 @@ dependencies = [
  "itertools 0.14.0",
  "rand 0.9.2",
  "rand_chacha 0.9.0",
- "ranim 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ranim 0.1.3",
  "rayon",
 ]
 
@@ -2824,9 +2827,9 @@ dependencies = [
 
 [[package]]
 name = "js-sys"
-version = "0.3.77"
+version = "0.3.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1cfaf33c695fc6e08064efbc1f72ec937429614f25eef83af942d0e227c3a28f"
+checksum = "6247da8b8658ad4e73a186e747fcc5fc2a29f979d6fe6269127fdb5fd08298d0"
 dependencies = [
  "once_cell",
  "wasm-bindgen",
@@ -4366,50 +4369,6 @@ dependencies = [
 [[package]]
 name = "ranim"
 version = "0.1.3"
-dependencies = [
- "anyhow",
- "async-channel",
- "bytemuck",
- "chrono",
- "color 0.3.2",
- "console_error_panic_hook",
- "console_log",
- "derive_more",
- "egui",
- "egui-wgpu",
- "egui-winit",
- "flate2",
- "getrandom 0.3.3",
- "glam",
- "image",
- "indicatif 0.18.0",
- "inventory",
- "itertools 0.14.0",
- "log",
- "lru",
- "pollster",
- "ranim-macros 0.1.3",
- "regex",
- "reqwest",
- "sha1",
- "slotmap",
- "typst",
- "typst-kit",
- "typst-svg",
- "usvg 0.45.1",
- "variadics_please",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "web-time",
- "wgpu 25.0.2",
- "which",
- "winit",
-]
-
-[[package]]
-name = "ranim"
-version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05e5b175897e19642ccaeab50bd462653ee0dee3a419f5e3f11585cbc907b8f1"
 dependencies = [
@@ -4437,7 +4396,7 @@ dependencies = [
  "profiling",
  "puffin",
  "puffin_http",
- "ranim-macros 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ranim-macros 0.1.3",
  "regex",
  "reqwest",
  "sha1",
@@ -4457,16 +4416,72 @@ dependencies = [
 ]
 
 [[package]]
+name = "ranim"
+version = "0.1.4"
+dependencies = [
+ "anyhow",
+ "async-channel",
+ "bytemuck",
+ "chrono",
+ "color 0.3.2",
+ "console_error_panic_hook",
+ "console_log",
+ "derive_more",
+ "diff-match-patch-rs",
+ "egui",
+ "egui-wgpu",
+ "egui-winit",
+ "flate2",
+ "getrandom 0.3.3",
+ "glam",
+ "image",
+ "indicatif 0.18.0",
+ "inventory",
+ "itertools 0.14.0",
+ "log",
+ "lru",
+ "pollster",
+ "ranim-anims",
+ "ranim-core",
+ "ranim-items",
+ "ranim-macros 0.1.4",
+ "regex",
+ "reqwest",
+ "sha1",
+ "slotmap",
+ "typst",
+ "typst-kit",
+ "typst-svg",
+ "usvg 0.45.1",
+ "variadics_please",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "web-time",
+ "wgpu 25.0.2",
+ "which",
+ "winit",
+]
+
+[[package]]
 name = "ranim-014"
 version = "0.1.0"
 dependencies = [
  "include-lines",
- "ranim 0.1.3",
+ "ranim 0.1.4",
+]
+
+[[package]]
+name = "ranim-anims"
+version = "0.1.4"
+dependencies = [
+ "log",
+ "ranim-core",
 ]
 
 [[package]]
 name = "ranim-cli"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "async-channel",
@@ -4479,8 +4494,39 @@ dependencies = [
  "notify",
  "notify-debouncer-full",
  "pretty_env_logger",
- "ranim 0.1.3",
+ "ranim 0.1.4",
  "toml 0.9.5",
+]
+
+[[package]]
+name = "ranim-core"
+version = "0.1.4"
+dependencies = [
+ "bytemuck",
+ "color 0.3.2",
+ "derive_more",
+ "glam",
+ "itertools 0.14.0",
+ "log",
+]
+
+[[package]]
+name = "ranim-items"
+version = "0.1.4"
+dependencies = [
+ "chrono",
+ "derive_more",
+ "diff-match-patch-rs",
+ "itertools 0.14.0",
+ "log",
+ "lru",
+ "ranim-core",
+ "regex",
+ "sha1",
+ "typst",
+ "typst-kit",
+ "typst-svg",
+ "usvg 0.45.1",
 ]
 
 [[package]]
@@ -4497,6 +4543,8 @@ dependencies = [
 [[package]]
 name = "ranim-macros"
 version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58062fb8dd276752520f953166fedb48d1cfafa57b8253eaacf846ed99bbef6d"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -4506,9 +4554,7 @@ dependencies = [
 
 [[package]]
 name = "ranim-macros"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58062fb8dd276752520f953166fedb48d1cfafa57b8253eaacf846ed99bbef6d"
+version = "0.1.4"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -6333,7 +6379,7 @@ name = "vitem-visualize"
 version = "0.1.0"
 dependencies = [
  "itertools 0.14.0",
- "ranim 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ranim 0.1.3",
 ]
 
 [[package]]
@@ -6372,21 +6418,22 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen"
-version = "0.2.100"
+version = "0.2.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1edc8929d7499fc4e8f0be2262a241556cfc54a0bea223790e71446f2aab1ef5"
+checksum = "4ad224d2776649cfb4f4471124f8176e54c1cca67a88108e30a0cd98b90e7ad3"
 dependencies = [
  "cfg-if",
  "once_cell",
  "rustversion",
  "wasm-bindgen-macro",
+ "wasm-bindgen-shared",
 ]
 
 [[package]]
 name = "wasm-bindgen-backend"
-version = "0.2.100"
+version = "0.2.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f0a0651a5c2bc21487bde11ee802ccaf4c51935d0d3d42a6101f98161700bc6"
+checksum = "3a1364104bdcd3c03f22b16a3b1c9620891469f5e9f09bc38b2db121e593e732"
 dependencies = [
  "bumpalo",
  "log",
@@ -6398,9 +6445,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-futures"
-version = "0.4.50"
+version = "0.4.52"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "555d470ec0bc3bb57890405e5d4322cc9ea83cebb085523ced7be4144dac1e61"
+checksum = "9c0a08ecf5d99d5604a6666a70b3cde6ab7cc6142f5e641a8ef48fc744ce8854"
 dependencies = [
  "cfg-if",
  "js-sys",
@@ -6411,9 +6458,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro"
-version = "0.2.100"
+version = "0.2.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fe63fc6d09ed3792bd0897b314f53de8e16568c2b3f7982f468c0bf9bd0b407"
+checksum = "0d7ab4ca3e367bb1ed84ddbd83cc6e41e115f8337ed047239578210214e36c76"
 dependencies = [
  "quote",
  "wasm-bindgen-macro-support",
@@ -6421,9 +6468,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro-support"
-version = "0.2.100"
+version = "0.2.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ae87ea40c9f689fc23f209965b6fb8a99ad69aeeb0231408be24920604395de"
+checksum = "4a518014843a19e2dbbd0ed5dfb6b99b23fb886b14e6192a00803a3e14c552b0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6434,9 +6481,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-shared"
-version = "0.2.100"
+version = "0.2.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a05d73b933a847d6cccdda8f838a22ff101ad9bf93e33684f39c1f5f0eece3d"
+checksum = "255eb0aa4cc2eea3662a00c2bbd66e93911b7361d5e0fcd62385acfd7e15dcee"
 dependencies = [
  "unicode-ident",
 ]
@@ -6606,9 +6653,9 @@ dependencies = [
 
 [[package]]
 name = "web-sys"
-version = "0.3.77"
+version = "0.3.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33b6dd2ef9186f1f2072e409e99cd22a975331a6b3591b12c764e0e55c60d5d2"
+checksum = "50462a022f46851b81d5441d1a6f5bac0b21a1d72d64bd4906fbdd4bf7230ec7"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
@@ -6976,7 +7023,7 @@ checksum = "c0fdd3ddb90610c7638aa2b3a3ab2904fb9e5cdbecc643ddb3647212781c4ae3"
 dependencies = [
  "windows-implement 0.60.0",
  "windows-interface 0.59.1",
- "windows-link",
+ "windows-link 0.1.3",
  "windows-result 0.3.4",
  "windows-strings 0.4.2",
 ]
@@ -7032,12 +7079,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e6ad25900d524eaabdbbb96d20b4311e1e7ae1699af4fb28c17ae66c80d798a"
 
 [[package]]
+name = "windows-link"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "45e46c0661abb7180e7b9c281db115305d49ca1709ab8242adf09666d2173c65"
+
+[[package]]
 name = "windows-registry"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b8a9ed28765efc97bbc954883f4e6796c33a06546ebafacbabee9696967499e"
 dependencies = [
- "windows-link",
+ "windows-link 0.1.3",
  "windows-result 0.3.4",
  "windows-strings 0.4.2",
 ]
@@ -7057,7 +7110,7 @@ version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56f42bd332cc6c8eac5af113fc0c1fd6a8fd2aa08a0119358686e5160d0586c6"
 dependencies = [
- "windows-link",
+ "windows-link 0.1.3",
 ]
 
 [[package]]
@@ -7076,7 +7129,7 @@ version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56e6c93f3a0c3b36176cb1327a4958a0353d5d166c2a35cb268ace15e91d3b57"
 dependencies = [
- "windows-link",
+ "windows-link 0.1.3",
 ]
 
 [[package]]
@@ -7167,7 +7220,7 @@ version = "0.53.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d5fe6031c4041849d7c496a8ded650796e7b6ecc19df1a431c1a363342e5dc91"
 dependencies = [
- "windows-link",
+ "windows-link 0.1.3",
  "windows_aarch64_gnullvm 0.53.0",
  "windows_aarch64_msvc 0.53.0",
  "windows_i686_gnu 0.53.0",

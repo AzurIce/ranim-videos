@@ -27,7 +27,6 @@ fn rng() -> Arc<Mutex<ChaCha8Rng>> {
 }
 
 #[scene]
-#[preview]
 #[output]
 fn denoise(r: &mut RanimScene) {
     let _r_cam = r.insert_and_show(CameraFrame::default());
@@ -227,11 +226,4 @@ impl Extract for TimeSurface {
             })
             .collect()
     }
-}
-
-fn main() {
-    #[cfg(not(feature = "app"))]
-    render_scene(denoise_scene);
-    #[cfg(feature = "app")]
-    preview(denoise_scene);
 }
