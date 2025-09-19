@@ -187,7 +187,7 @@ fn vitem(r: &mut RanimScene) {
         .map(VisualVItem)
         .map(|item| r.insert_and_show(item))
         .collect::<Vec<_>>();
-    let default_cam = r.timeline(&r_cam).state().clone();
+    let default_cam = r.timeline(&r_cam).snapshot();
     r.timelines_mut().forward(1.0);
     r.timeline_mut(&r_cam).play_with(|cam| {
         cam.transform(|cam| {
@@ -233,7 +233,7 @@ pub fn vitem_hello(r: &mut RanimScene) {
         timeline
             .play_with(|item| item.transform_to(circle))
             .forward(1.0);
-        let circle = timeline.state().clone();
+        let circle = timeline.snapshot();
         timeline
             .play_with(|circle| circle.unwrite().with_duration(2.0))
             .play(circle.write().with_duration(2.0))

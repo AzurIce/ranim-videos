@@ -9,7 +9,6 @@ use ranim::{
         geometry::{Circle, Square},
     },
     prelude::*,
-    timeline::TimeMark,
 };
 
 #[scene]
@@ -18,7 +17,7 @@ fn hello_ranim(r: &mut RanimScene) {
     let _r_cam = r.insert_and_show(CameraFrame::default());
 
     let mut square = Square::new(2.0);
-    square.set_color(manim::BLUE_C);
+    square.set_color(manim::BLUE_C).set_fill_opacity(0.8);
 
     let r_square = r.insert(square);
     {
