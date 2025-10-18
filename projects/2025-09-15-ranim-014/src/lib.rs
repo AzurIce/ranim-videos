@@ -1,22 +1,26 @@
 #![feature(iter_intersperse)]
 #![allow(unused)]
 mod code_structure;
+mod visual_timeline;
 
 use ranim::{
     anims::{
         creation::WritingAnim, fading::FadingAnim, lagged::LaggedAnim, transform::TransformAnim,
     },
     color::palettes::manim,
+    core::primitives::vitem::VItemPrimitive,
     glam::DVec3,
     items::vitem::{
         Group, VItem,
-        geometry::Circle,
+        geometry::{Circle, Square},
         svg::SvgItem,
         typst::{TypstText, typst_svg},
     },
     prelude::*,
     utils::rate_functions::smooth,
 };
+
+use crate::{code_structure::hello_ranim_square_anim, visual_timeline::VisualTimeline};
 
 #[scene(clear_color = "#ffffff")]
 pub fn test_alpha(r: &mut RanimScene) {
@@ -39,27 +43,42 @@ pub fn test_alpha(r: &mut RanimScene) {
 #[scene(clear_color = "#ffffff")]
 pub fn test(r: &mut RanimScene) {
     let _r_cam = r.insert_and_show(CameraFrame::default());
-    let a = Group::<VItem>::from(SvgItem::new(typst_svg("`fn main()`"))).with(|x| {
-        x.scale_to(ScaleHint::PorportionalY(2.0)).shift(DVec3::Y);
-    });
-    let b = Group::<VItem>::from(SvgItem::new(typst_svg("`fn foo()`"))).with(|x| {
-        x.scale_to(ScaleHint::PorportionalY(2.0)).shift(DVec3::Y);
-    });
-    let r_a = r.insert_and(a, |t| {
-        t.play_with(|x| x.transform_to(b));
-    });
+    let a = r.insert_and_show(Square::new(1.0));
+    let b = r.insert(Square::new(1.0).with(|x| {
+        x.shift(DVec3::Y);
+    }));
+    r.timeline_mut(&a)
+        .forward(2.0)
+        .forward(3.0)
+        .play_with(|x| x.fade_in());
 
-    let a = TypstText::new_inline_code("fn main()").with(|x| {
-        x.scale_to(ScaleHint::PorportionalY(2.0))
-            .shift(DVec3::NEG_Y);
-    });
-    let b = TypstText::new_inline_code("fn foo()").with(|x| {
-        x.scale_to(ScaleHint::PorportionalY(2.0))
-            .shift(DVec3::NEG_Y);
-    });
-    let r_a = r.insert_and(a, |t| {
-        t.play_with(|x| x.transform_to(b));
-    });
+    r.timelines_mut().sync();
+
+    r.timeline_mut(&b)
+        .forward(1.0)
+        .forward(2.0)
+        .play_with(|x| x.fade_in());
+    // let a = Group::<VItem>::from(SvgItem::new(typst_svg("`fn main()`"))).with(|x| {
+    //     x.scale_to(ScaleHint::PorportionalY(2.0)).shift(DVec3::Y);
+    // });
+    // let b = Group::<VItem>::from(SvgItem::new(typst_svg("`fn foo()`"))).with(|x| {
+    //     x.scale_to(ScaleHint::PorportionalY(2.0)).shift(DVec3::Y);
+    // });
+    // let r_a = r.insert_and(a, |t| {
+    //     t.play_with(|x| x.transform_to(b));
+    // });
+
+    // let a = TypstText::new_inline_code("fn main()").with(|x| {
+    //     x.scale_to(ScaleHint::PorportionalY(2.0))
+    //         .shift(DVec3::NEG_Y);
+    // });
+    // let b = TypstText::new_inline_code("fn foo()").with(|x| {
+    //     x.scale_to(ScaleHint::PorportionalY(2.0))
+    //         .shift(DVec3::NEG_Y);
+    // });
+    // let r_a = r.insert_and(a, |t| {
+    //     t.play_with(|x| x.transform_to(b));
+    // });
 }
 
 const CODE_TRAIT_WITH: &'static str = r#"pub trait With {
@@ -76,7 +95,17 @@ const CODE_TRAIT_WITH: &'static str = r#"pub trait With {
 impl<T> With for T {}
 "#;
 
+pub fn section_title(r: &mut RanimScene, title: &str) {
+    
+}
+
+#[scene(clear_color = "#ffffff")]
+pub fn preview_scene(r: &mut RanimScene) {
+    section_title(r, "Getting Ranimed");
+}
+
 #[scene(clear_color = "#ffffffff")]
+#[output]
 pub fn code_structure(r: &mut RanimScene) {
     let padded_height = 8.0 * 0.9;
     let padded_width = 16.0 / 9.0 * padded_height;
@@ -95,7 +124,21 @@ pub fn code_structure(r: &mut RanimScene) {
         })
         .collect::<Vec<_>>();
 
+
+    // let new_vis_timeline = r.timeline(&r_vis_timeline).snapshot().with(|x| {
+    //     x.update_from(&r, except);
+    // });
+    // let new_vis_timeline_trans = Group::<VItem>::from(new_vis_timeline.clone());
+
+    // let target_sec = r.timelines().max_total_secs();
+    // let r_vis_timeline = r.map(r_vis_timeline, |x| Group::<VItem>::from(x));
+    // r.timeline_mut(&r_vis_timeline)
+    //     .forward_to(target_sec)
+    //     .play_with(|x| new_vis_timeline_trans.lagged(0.0, |x| x.write()));
+    // let r_vis_timeline = r.map(r_vis_timeline, |x| new_vis_timeline);
+
     let _r_cam = r.insert_and_show(CameraFrame::default());
+    let r_vis_timeline = r.insert(VisualTimeline::new().with_height(2.0).with_width(2.0));
 
     let r_code = r.insert(Group::<VItem>::from(codes[0].clone()));
     // Chained API
@@ -110,16 +153,49 @@ pub fn code_structure(r: &mut RanimScene) {
         .play_with(|x| x.transform_to(codes[1].clone()).with_rate_func(smooth))
         .forward(3.0) // 当然，可以添加任意数量的输出，并带有不同的参数
         .play_with(|x| x.transform_to(codes[2].clone()).with_rate_func(smooth))
-        .forward(2.0);
-
-    r.timeline_mut(&r_code)
+        .forward(2.0)
         .play_with(|x| x.transform_to(codes[1].clone()).with_rate_func(smooth));
+
+    r.timelines_mut().sync();
+    let code_tmp = TypstText::new_multiline_code(
+        r#"let mut square = Square::new(2.0);
+square.set_color(manim::BLUE_C).set_fill_opacity(0.8);
+
+let r_square = r.insert(square);"#,
+        Some("rust"),
+    )
+    .with(|x| {
+        x.scale_to_min(&[
+            ScaleHint::PorportionalY(padded_height),
+            ScaleHint::PorportionalX(padded_width),
+        ])
+        .set_stroke_width(0.002);
+    });
     /* Ranim 中用于编码动画的主要 API 都在 `RanimScene` 中。 */
     r.timeline_mut(&r_code)
         .forward(3.0) // 你可以用它来创建一条物件时间线
         .play_with(|x| x.transform_to(codes[3].clone()).with_rate_func(smooth))
         .forward(2.0) // 用它来在时间线上编码动画
-        .play_with(|x| x.transform_to(codes[4].clone()).with_rate_func(smooth))
+        .play_with(|x| x.transform_to(codes[4].clone()).with_rate_func(smooth));
+
+    let vis_timeline = r
+        .timeline_mut(&r_vis_timeline)
+        .forward(3.0)
+        .forward(1.0)
+        .forward(2.0)
+        .snapshot()
+        .with(|x| {
+            x.update_inner_from(&RanimScene::new().with(hello_ranim_square_anim::hello_ranim))
+        });
+    let r_vis_timeline = r.map(r_vis_timeline, Group::<VItem>::from);
+    r.timeline_mut(&r_vis_timeline).play(
+        Group::<VItem>::from(vis_timeline.clone())
+            .lagged(0.0, |x| x.write())
+            .with_rate_func(smooth),
+    );
+    let r_vis_timeline = r.map(r_vis_timeline, |_| vis_timeline.clone());
+
+    r.timeline_mut(&r_code)
         .forward(5.0) // 此外，如果你想让 Ranim 帮你截取一张图片，只需要向其中
         .play_with(|x| x.transform_to(codes[5].clone()).with_rate_func(smooth)) // 插入一个 `TimeMark`
         .forward(5.0) // 值得一提的是，Ranim 中的绝大部分 API 都是支持链式调用的，
@@ -129,26 +205,13 @@ pub fn code_structure(r: &mut RanimScene) {
         .forward(0.5)
         .play_with(|x| x.transform_to(codes[8].clone()).with_rate_func(smooth))
         .forward(4.0) // 除此之外，为了支持将这种声明、修改、使用的代码写成一条语句
-        .play_with(|x| {
-            x.transform_to(
-                TypstText::new_multiline_code(
-                    r#"let mut square = Square::new(2.0);
-square.set_color(manim::BLUE_C).set_fill_opacity(0.8);
-
-let r_square = r.insert(square);"#,
-                    Some("rust"),
-                )
-                .with(|x| {
-                    x.scale_to_min(&[
-                        ScaleHint::PorportionalY(padded_height),
-                        ScaleHint::PorportionalX(padded_width),
-                    ])
-                    .set_stroke_width(0.002);
-                }),
-            )
-            .with_rate_func(smooth)
-        })
+        .play_with(|x| x.transform_to(code_tmp).with_rate_func(smooth))
         .forward(2.0); // Ranim 提供了一个 `With` Trait
+
+    // let r_vis_timeline =
+    //     vis_timeline.update_inner_transform_from(r_vis_timeline, r, &code_scene, |x| {
+    //         x.with_rate_func(smooth)
+    //     });
 
     let time = r.timelines().max_total_secs();
     let last_time = 3.0;

@@ -3,3 +3,4 @@
 output/
 
 .direnv/
+profile.json.gz
