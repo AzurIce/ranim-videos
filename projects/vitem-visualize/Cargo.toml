@@ -6,10 +6,7 @@ edition = "2024"
 [lib]
 crate-type = ["rlib", "dylib"]
 
-[features]
-app = ["ranim/app"]
-
 [dependencies]
 # ranim.workspace = true
-ranim = { version = "0.1.3", features = ["app"] }
+ranim = { version = "0.1.5", features = ["preview"] }
 itertools.workspace = true

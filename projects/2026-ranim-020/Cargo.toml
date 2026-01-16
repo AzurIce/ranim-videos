@@ -1,11 +1,15 @@
 [package]
-name = "ranim-014"
+name = "ranim-020"
 version = "0.1.0"
 edition = "2024"
+
+[features]
+render = ["ranim/render"]
+preview = ["ranim/preview"]
 
 [lib]
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-ranim = { version = "0.1.5", features = ["preview"] }
+ranim.workspace = true
 include-lines = "1.1.2"

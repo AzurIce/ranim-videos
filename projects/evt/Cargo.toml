@@ -3,15 +3,17 @@ name = "evt"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+crate-type = ["rlib", "dylib"]
+
 [features]
-app = ["ranim/app"]
 profiling = ["ranim/profiling"]
 
 [dependencies]
-ranim = "0.1.3"
+ranim = { version = "0.1.5", features = ["preview"] }
 # ranim.workspace = true
 itertools.workspace = true
-evt-lib = { git = "https://github.com/BJTUEventCameraSoftwareGroup/evt-lib", branch = "nusb-v0.2" }
+evt-lib = { git = "https://github.com/BJTUEventCameraSoftwareGroup/evt-lib" }
 rayon = "1.10.0"
 rand = "0.9.1"
 rand_chacha = "0.9.0"

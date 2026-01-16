@@ -8,15 +8,10 @@ use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 use ranim::{
     color::palettes::manim,
-    components::ScaleHint,
+    core::{Extract, primitives::vitem::VItemPrimitive},
     glam::{DVec3, dvec3},
-    items::{
-        Group,
-        vitem::{VItem, geometry::Square, svg::SvgItem, typst::typst_svg},
-    },
+    items::vitem::{Group, VItem, geometry::Square, svg::SvgItem, typst::typst_svg},
     prelude::*,
-    render::primitives::{Extract, vitem::VItemPrimitive},
-    timeline::TimelinesFunc,
 };
 use rayon::prelude::*;
 
@@ -114,8 +109,8 @@ impl TimeSurfaceCell {
 // With LRU Cache: 51117.8 µs
 // With LRU Cache and only construct world once: 2475.2 µs
 impl Extract for TimeSurfaceCell {
-    type Target = Vec<VItemPrimitive>;
-    fn extract(&self) -> Self::Target {
+    type Target = VItemPrimitive;
+    fn extract(&self) -> Vec<Self::Target> {
         let mut _cache = self._cache.lock().unwrap();
         let mut _need_update = self._need_update.lock().unwrap();
         if let Some(cache) = _cache.as_ref() {
@@ -140,7 +135,7 @@ impl Extract for TimeSurfaceCell {
         let res = [VItem::from(square)]
             .into_iter()
             .chain(Group::<VItem>::from(text))
-            .map(|item| item.extract())
+            .flat_map(|item| item.extract())
             .collect::<Vec<_>>();
         *_cache = Some(res.clone());
         *_need_update = false;
@@ -208,8 +203,8 @@ impl TimeSurface {
 }
 
 impl Extract for TimeSurface {
-    type Target = Vec<VItemPrimitive>;
-    fn extract(&self) -> Self::Target {
+    type Target = VItemPrimitive;
+    fn extract(&self) -> Vec<Self::Target> {
         let t = self.cells[0].t;
         let (min_t, max_t) = self
             .cells
