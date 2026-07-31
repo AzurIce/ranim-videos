@@ -1,5 +1,5 @@
 [package]
-name = "vitem-visualize"
+name = "playground"
 version = "0.1.0"
 edition = "2024"
 
@@ -7,7 +7,6 @@ edition = "2024"
 crate-type = ["rlib", "dylib"]
 
 [dependencies]
+# ranim = "0.1.5"
 ranim.workspace = true
-ranim-macros.workspace = true
-# ranim = { version = "0.1.5", features = ["preview"] }
 itertools.workspace = true
